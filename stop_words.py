@@ -56,5 +56,6 @@ def get_stop_words(file_path='./data/stop_words.txt'):
 
 
 if __name__ == '__main__':
-    sw = converge_files_data(['./data/StopWordsData/StopWordsData.txt', './data/StopWordsData/StopWordsData-hit.txt'])
+    sw = converge_files_data(['./data/StopWordsData/StopWordsData.txt',
+                              './data/StopWordsData/StopWordsData-hit.txt'])
     record_stop_words_data(sw)

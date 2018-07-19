@@ -24,13 +24,3 @@ def decode64file(path_file):
             str_set.add(base64.b64decode(s))
 
     return str_set
-
-
-if __name__ == '__main__':
-    # s1 = decode64file('./test/data/pub_banned_words.txt')
-    f2 = open('pron.txt','w')
-    with open('./data/SensitiveWords/pron.txt', 'rb') as f:
-        for l in f:
-            s = l.strip().replace(',', '')
-            f2.write(s)
-            f2.write("\n")
