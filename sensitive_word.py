@@ -6,6 +6,13 @@
 敏感词处理
 从文件中读取敏感词,添加不同类别的敏感词,保存到txt或者DB中
 
+>>>s = SensitiveWords()
+>>>s.get_sensitive_word('./data/SensitiveWords/ad.txt') # 读取文件中的敏感词
+>>>s.add_sensitive_word(u'default')                     # 添加敏感词 unicode
+>>>s.add_sensitive_word('minitrill', word_type='ad')    # 添加敏感词并指定敏感词类型
+>>>s.save_data()                                        # 保存敏感词数据
+>>>s.sensitive_word_dict                                # 核心数据被保存在字典中
+
 author    :   @h-j-13
 time      :   2018-7-19
 """
@@ -39,10 +46,12 @@ class SensitiveWords(object):
             self.sensitive_word_dict[sensitive_word_type] = set()
             for line in f:
                 if line.strip():
-                    self.sensitive_word_dict[sensitive_word_type].add(line.strip())
+                    self.sensitive_word_dict[sensitive_word_type].add(line.strip().decode('utf-8'))
 
     def add_sensitive_word(self, word, word_type='default'):
         """添加敏感词"""
+        if type(word) == str:
+            word = word.decode('utf-8')
         if word_type in self.sensitive_word_dict.keys() or word_type == 'default':
             self.sensitive_word_dict[word_type].add(word)
 
@@ -52,13 +61,5 @@ class SensitiveWords(object):
             file_path = filter(lambda x: word_type in x, self.file_path_list)[0]
             with open(file_path, 'wb') as f:
                 for word in self.sensitive_word_dict[word_type]:
-                    f.write(word)
+                    f.write(word.encode("utf-8"))
                     f.write("\n")
-
-
-if __name__ == '__main__':
-    s = SensitiveWords()
-    s.get_sensitive_word('./data/SensitiveWords/ad.txt')
-    s.add_sensitive_word('test')
-    s.add_sensitive_word('迷药', 'ad')
-    s.save_data()
