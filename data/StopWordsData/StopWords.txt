@@ -2,6 +2,8 @@
 // 互联网常用敏感词、停止词词库
 // ref : https://github.com/fwwdn/sensitive-stop-words
 
+【
+】
 !
 "
 #
