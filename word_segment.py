@@ -6,7 +6,7 @@
 通过jieba分词对文本文件数据进行分词并保存到文件中
 
 author    :   @h-j-13
-time      :   2018-7-18
+time      :   2018-7-20
 """
 
 import os
@@ -17,7 +17,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 train_data_url = './data/FudanTrainData/'
-segment_data_url = './word_segment/'
+segment_data_url = './data/WordSegment/'
 
 from stop_words import get_stop_words
 

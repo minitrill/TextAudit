@@ -7,8 +7,8 @@
 整合多个停用词文本,生成停用词字典,并支持更新并保存到文件中
 
 >>> stop_words = get_stop_words()
->>> stop_words
-set(['stop word1', 'stop word1' ,...])
+
+stop_words  # ...set(['stop word1', 'stop word1' ,...])
 
 author    :   @h-j-13
 time      :   2018-7-18
@@ -47,15 +47,9 @@ def get_stop_words(file_path='./data/stop_words.txt'):
     with open(file_path, 'rb') as f:
         for word in f:
             if not word.startswith('//'):
-                stop_words_set.add(word.strip())
+                stop_words_set.add(word.strip().decode('utf8'))
     # 处理空字符串
     if '' in stop_words_set:
         stop_words_set.remove('')
 
     return stop_words_set
-
-
-if __name__ == '__main__':
-    sw = converge_files_data(['./data/StopWordsData/StopWordsData.txt',
-                              './data/StopWordsData/StopWordsData-hit.txt'])
-    record_stop_words_data(sw)
