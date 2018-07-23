@@ -4,22 +4,23 @@
 
 """
 文本分类模型
-多种算法的文本分类器模型
+基于TF-IDF结合多种算法的文本分类器模型
 
 >>>t = TextClassifie()          # 初始化
 >>>t.set_classifie_model()      # 选择分类器模型
->>>t.init_clf()
+>>>t.init_clf()                 # 分类器初始化
 
 >>>d = DataSet()        # 构建数据集
 >>>d.set_labels(["人", "物"])                        # 设置标签
 >>>d.add_data("我叫jerry", 'train_data_1', data_labels='人')  # 添加数据(文本,id,标签)
 >>>d.add_data("这个是桌子", 'train_data_2', data_labels='物体')
 >>>tarin_data = d.train2tf_idf()                         # 生成tf-idf数据
->>>t.train(tarin_data)                                   # 训练模型
+>>>train_data.save_tf_idf_data()                         # 保存数据到文件中
+>>>train_data.read_tf_idf_data()                         # 从文件中读取数据
 
+>>>t.train(tarin_data)                                   # 训练模型
 >>>t.predicted(tarin_data)                               # 对数据进行文本分类(这里用训练数据代替,用同样的方式可以生成测试数据
 >>># ['人','物体']
-
 >>>t.metrics_result()
 >>># 比对模型精度(只针对打好标签的训练集)
 
