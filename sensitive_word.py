@@ -49,6 +49,14 @@ class SensitiveWords(object):
         for file_path in self.file_path_list:
             self.get_sensitive_word(file_path)
 
+    def __str__(self):
+        """输出敏感词类详细信息"""
+        res = "共 " + str(len(self.sensitive_word_dict.keys())) + " 类 (" + ",".join(self.sensitive_word_dict.keys())
+        res += ")类敏感词:\n"
+        for k in self.sensitive_word_dict.keys():
+            res += k + "\t-\t" + str(len(self.sensitive_word_dict[k])) + " 个 \n"
+        return res
+
     def get_sensitive_word(self, path):
         """从文件中读取敏感词"""
         global SENSITIVE_WORDS_DEFAULT_WEIGHT
@@ -56,8 +64,6 @@ class SensitiveWords(object):
             sensitive_word_type = str(path).split('/')[-1].replace('.txt', '')
             self.sensitive_word_dict[sensitive_word_type] = {}
             for line in f:
-                if sensitive_word_type == 'illegal':
-                    print line
                 if line.strip():
                     line_stplit = line.strip().split('\t')
                     if len(line_stplit) == 2:
@@ -77,7 +83,7 @@ class SensitiveWords(object):
             self.sensitive_word_dict[word_type][word] = word_weight
 
     def save_data(self):
-        """存储数据到文件中"""
+        """存储数据到文件中(读取地址)"""
         for word_type in self.sensitive_word_dict.keys():
             file_path = filter(lambda x: word_type in x, self.file_path_list)[0]
             with open(file_path, 'wb') as f:
@@ -86,9 +92,5 @@ class SensitiveWords(object):
                     f.write("\t")
                     f.write(str(weight))
                     f.write("\n")
-
-
 if __name__ == '__main__':
-    SensitiveWords().get_sensitive_word("./data/SensitiveWords/illegal.txt")
-    # for i,v in SensitiveWords().sensitive_word_dict.items():
-    #     print i
+    print SensitiveWords()
