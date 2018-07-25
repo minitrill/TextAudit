@@ -6,13 +6,13 @@
 文本过滤器
 基于DFA与字典树实现的高效文本过滤器
 
-# >>>t = TextFilter()     # 初始化                       # 贪婪模式,匹配所有敏感词
-# >>>t.is_contain('气死我了,卧槽. 免费提供无抵押贷款')       # 监测是否有敏感词,返回(敏感词在字符串的起始位置,
+# >>>t = TextFilter()     # 初始化                         # 贪婪模式,匹配所有敏感词
+# >>>t.is_contain('气死我了,卧槽. 免费提供无抵押贷款')         # 监测是否有敏感词,返回(敏感词在字符串的起始位置,
 #                                                                               敏感词,敏感词类型,敏感词权重)构成的列表
 # [(5, u'\u5367\u69fd', 'dirty', 5.0), (13, u'\u65e0\u62b5\u62bc\u8d37\u6b3e', 'ad', 10.0)]
-# >>>t.filter('习近平修宪')                                # 敏感词过滤 str
+# >>>t.filter('习近平修宪')                                 # 敏感词过滤 str
 # ***修宪
-# >>>t.filter(u'卧槽,我真是草泥马')                         # 敏感词过滤 unicode
+# >>>t.filter(u'卧槽,我真是草泥马')                          # 敏感词过滤 unicode
 # **,我真是***
 # >>>t.filter(u'法论功大发好,真善忍好',replace_char=u'-')    # 敏感词过滤,指定替换字符
 # ---大发好,真善忍好
@@ -21,6 +21,11 @@
 # >>>t.add_word(u'英雄联盟代练')
 # >>>t.filter('高效低价英雄联盟代练')
 # 高效低价******
+# >>>t.classifie('气死我了,卧槽. 免.费提供.无抵押.贷款')      # 基于敏感词的语句分类及恶意度量化(过滤无用字符)
+# {'massage type': 'ad',
+# 'malicious count': 15.0,
+# 'malicious info': {'dirty': 5.0, 'ad': 10.0},
+# 'massage details':[(4, u'\u5367\u69fd', 'dirty', 5.0), (10, u'\u65e0\u62b5\u62bc\u8d37\u6b3e', 'ad', 10.0)]}
 
 author    :   @h-j-13
 time      :   2018-7-19
@@ -141,8 +146,3 @@ class TextFilter(object):
             result["malicious count"] += v
         result["massage type"] = message_type
         return result
-
-
-if __name__ == '__main__':
-    t = TextFilter()  # 初始化                          # 贪婪模式,匹配所有敏感词
-    print t.classifie('气死我了,卧槽. 免费提供无抵押贷款')  # 监测是否有敏感词,返回(敏感词在字符串的起始位置,敏感词,敏感词类型)构成的列表
