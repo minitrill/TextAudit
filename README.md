@@ -5,12 +5,14 @@ minitrill 文本审核模块
 ## 模块架构
 基本模块架构如下
 
-![](https://upload-images.jianshu.io/upload_images/5617720-4e2fbdd21464bd77.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![minitrill 内容安全.png](https://upload-images.jianshu.io/upload_images/5617720-46bcdfceb971065b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 #### 模块划分
 整个文本审核主要分为两个模块
 1. [文本处理模块](#文本处理)(基础)
 2. [审核策略模块](#审核策略)(核心)
-![](https://upload-images.jianshu.io/upload_images/5617720-4ee26dd36d3c276b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![](https://upload-images.jianshu.io/upload_images/5617720-0d28cd7c92a603b8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 #### 审核范围
 审核范围包括所用用户产生的文字信息,按照重要程度主要分为以下三类
 - 发布内容(视频标题,用户简介,视频评论...)
@@ -39,7 +41,7 @@ minitrill 文本审核模块
 ```diff
 + 希望对于不同的场景不同的目标人群,采取不同的打击策略和应对手段     
 + 在维护平台内容安全的前提下,尽可能提高用户体验     
-+ 鉴别和发现**持续有害**的用户进行打击
++ 鉴别和发现 [持续有害] 的用户进行打击
 - 可以防止粗暴的一刀切策略影响用户体验      
 - 对于有些文本即使单单进行关键词过滤也无法阻止其生效或表达
 ```
@@ -65,7 +67,8 @@ minitrill 文本审核模块
 from text_filter import TextFilter
 
 t = TextFilter()     # 初始化                      # 贪婪模式,匹配所有敏感词
-t.is_contain('气死我了,卧槽. 免费提供无抵押贷款')       # 监测是否有敏感词,返回(敏感词在字符串的起始位置,敏感词,敏感词类型)构成的列表
+t.is_contain('气死我了,卧槽. 免费提供无抵押贷款')       # 监测是否有敏感词,
+                                                   # 返回(敏感词在字符串的起始位置,敏感词,敏感词类型)构成的列表
 [(5, u'\u5367\u69fd', 'dirty'), (13, u'\u65e0\u62b5\u62bc\u8d37\u6b3e', 'ad')]
 t.filter('习近平修宪')                               # 敏感词过滤 str
 # ***修宪
@@ -133,8 +136,7 @@ train_data.save_tf_idf_data()                         # 保存数据到文件中
 train_data.read_tf_idf_data()                         # 从文件中读取数据
 # 分类模型训练及比较
 t.train(tarin_data)                                   # 训练模型
-t.predicted(tarin_data)                               # 对数据进行文本分类(这里用训练数据代替,用同样的方式可以生成测试数据
-# ['人','物体']
+t.predicted(tarin_data)                               # 对数据进行文本分类(这里用训练数据代替)
 t.metrics_result()
 # 比对模型精度(只针对打好标签的训练集)
 ```
@@ -262,7 +264,11 @@ MH(语句健康度) = 100 - (语句中敏感词1权重 + 语句中敏感词2权�
 2. 词 A 所在的类别危害程度越大,则权重越大
 *敏感词权重范围(0~100)*
 
+**反馈机制**
 每隔一段时间会收集所有恶意类别的文本,根据词频记录新增的敏感词汇
+
+**文本健康度处理流程**
+![](https://upload-images.jianshu.io/upload_images/5617720-21b73309cf7e0a10.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 #### 用户健康度
 用户健康度标志着用户言论和行为的恶意程度.
@@ -271,9 +277,9 @@ MH(语句健康度) = 100 - (语句中敏感词1权重 + 语句中敏感词2权�
 
 1. 用户健康度默认值为100,上为100
 2. 用户健康度每周会上升 10 点(不会超过上限)
-3. 用户每条被`记录`的文本回扣扣除 0.05 * (100 - 被记录文本健康度) 健康度
-4. 用户每条被`警告/强迫修改/仅自己可见`会扣除 0.1 * (100 - 文本健康度) 健康度
-5. 用户每条被`删除`的文本会扣除20健康度
+3. 用户每条被`记录`的文本回扣扣除 0.05 * (100 - 被记录文本健康度) 用户健康度
+4. 用户每条被`警告/强迫修改/仅自己可见`会扣除 0.1 * (100 - 文本健康度) 用户健康度
+5. 用户每条被`删除`的文本会扣除20用户健康度
 
 
 ### 处理策略
