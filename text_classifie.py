@@ -110,15 +110,16 @@ class DataSet(object):
     def set_labels(self, label_list):
         """设置数据集的分类标签"""
         self.bunch.label_set = list(set(label_list))
-        self.bunch.label_set.append("default")  # 增加一个默认类别,用于存放训练数据
+        self.bunch.label_set.append(u"default")  # 增加一个默认类别,用于存放训练数据
 
-    def add_data(self, data, data_id, data_labels="default"):
-        """向数据集中添加数据,必须确定数据id及内容"""
+    def add_data(self, data, data_id, data_labels=u"default"):
+        """向数据集中添加数据,必须确定数据id及内容(要求输入字符串是utf8格式)"""
         self.bunch.labels.append(data_labels)
         self.bunch.ids.append(data_id)
         content = data
-        content.replace("\r\n", "")  # 删除换行
-        content = content.replace(" ", "")  # 删除空行、多余的空格
+        content.replace(u"\r\n", u"")  # 删除换行
+        content.replace(u"\t", u"")  # 删除制表符
+        content = content.replace(u" ", u"")  # 删除空行、多余的空格
         content_seg = jieba.cut(content)  # 为文件内容分词,注意分词之后是unicode
         content_seg_list = [word for word in content_seg]  # jieba默认返回一个迭代器,转化为list
         self.bunch.contents.append(" ".join(content_seg_list))
@@ -242,7 +243,7 @@ class TextClassifie(object):
 
 
 if __name__ == '__main__':
-    # 基于复旦文本分配数据进行文本分类
+    # ===========================文本分类模型================================
     train_data = DataSet()
     test_data = DataSet()
 
@@ -250,7 +251,8 @@ if __name__ == '__main__':
     test_data.read_tf_idf_data("./data/test.dat")
 
     t = TextClassifie()
-    t.set_classifie_model(CLASSIFIE_GBDT)
+    t.set_classifie_model()
+    # t.set_bayes_alpha(0.0001)
     t.init_clf()
 
     t.train(train_data.tf_idf_vector_space)
@@ -258,31 +260,66 @@ if __name__ == '__main__':
 
     t.metrics_result()
 
-    # 生成测试数据
-    # np.random.seed(13)
-    # train_data_percent = 0.7
+    # --------------------- RESULT ------------------------
+    # 使用alpha=0.0001的多项式贝叶斯分类模型
+    # 训练所用时间 : 0.3540 sec
+    # 分类所用时间 : 0.0060 sec
+    # 精度:0.96798
+    # 召回:0.96962
+    # f1-score:0.96301
+
+    # ==========================生成测试数据==========================
+    # malicious_data_url = './data/minitrill/malicious_text.txt'
+    # normal_data_url = './data/minitrill/normal_text.txt'
     #
-    # train_data_url = './data/FudanTrainData/'
-    #
+    # p = 0
+    # id_count = 0
+    # # dataset init
     # train_data = DataSet()
     # test_data = DataSet()
     #
-    # dir_list = os.listdir(train_data_url)
-    # train_data.set_labels(dir_list)
-    # test_data.set_labels(dir_list)
-    #
-    # for class_name in dir_list:
-    #     for file_name in os.listdir(train_data_url + class_name):
-    #         file_full_path = train_data_url + class_name + '/' + file_name
-    #         with open(file_full_path, 'rb') as f:
-    #             contents = f.read()
-    #         if np.random.rand() <= train_data_percent:
-    #             train_data.add_data(contents, file_name, class_name)
+    # train_data.set_labels(["0", "20001", "20002", "20004", "20006"])
+    # test_data.set_labels(["0", "20001", "20002", "20004", "20006"])
+    # # read file
+    # with open(malicious_data_url, "rb") as f:
+    #     for line in f:
+    #         l = line.decode('utf8').strip()
+    #         x = l.split('-', 1)
+    #         if p > 4: # 4:1 train/test
+    #             p = 0
+    #             test_data.add_data(x[1], str(id_count), data_labels=x[0])
     #         else:
-    #             test_data.add_data(contents, file_name, class_name)
+    #             train_data.add_data(x[1], str(id_count), data_labels=x[0])
     #
+    #         id_count += 1
+    #         p += 1
+    # with open(normal_data_url, "rb") as f:
+    #     for line in f:
+    #         l = line.decode('utf8').strip()
+    #         x = l.split('-', 1)
+    #         if p > 8:
+    #             p = 0
+    #             test_data.add_data(x[1], str(id_count), data_labels=x[0])
+    #         else:
+    #             train_data.add_data(x[1], str(id_count), data_labels=x[0])
+    #
+    #         id_count += 1
+    #         p += 1
+    #
+    # # tf-idf
     # train_data.train2tf_idf()
     # test_data.train2tf_idf()
-    #
+    # # save
     # train_data.save_tf_idf_data("./data/train.dat")
     # test_data.save_tf_idf_data("./data/test.dat")
+
+    # ==========================构造测试文本=====================
+    # malicious_data_url = './data/minitrill/malicious.txt'
+    # normal_data_url = './data/minitrill/normal.txt'
+    #
+    # fr = open('./data/minitrill/malicious_text.txt', 'wb')
+    # with open(malicious_data_url, 'rb') as f:
+    #     for line in f:
+    #         line = line.decode('utf8').strip()
+    #         t = line.split('\t')
+    #         fr.write(str(t[0]) + '-' + str(t[-1]) + '\n')
