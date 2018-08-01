@@ -52,6 +52,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 
 from stop_words import get_stop_words
+from sensitive_word import SensitiveWords
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -72,6 +73,7 @@ test_data_tf_idf_path = ""
 
 TfidfVectorizer_OBJ = None
 TfidfVectorizer_init = False
+ADD_USER_DICT = False
 
 
 class DataSet(object):
@@ -91,6 +93,7 @@ class DataSet(object):
         if TfidfVectorizer_OBJ is None:
             TfidfVectorizer_OBJ = TfidfVectorizer(stop_words=self.stop_words, sublinear_tf=True, max_df=0.5)
         self.tf_idfVectorizer = TfidfVectorizer_OBJ
+        self.add_user_dict()
 
     def __str__(self):
         """支持print方法输出数据集信息"""
@@ -106,6 +109,16 @@ class DataSet(object):
         """获取数据集大小"""
         return {"label num": len(set(self.bunch.label_set)),
                 "data num": len(self.bunch.contents)}
+
+    def add_user_dict(self):
+        """添加已知的敏感词作为用户词典"""
+        global ADD_USER_DICT
+        if not ADD_USER_DICT:  # 全局只用添加一次就够了
+            ADD_USER_DICT = True
+            sw = SensitiveWords()
+            for k in sw.sensitive_word_dict.keys():
+                for word in sw.sensitive_word_dict[k]:
+                    jieba.add_word(word)
 
     def set_labels(self, label_list):
         """设置数据集的分类标签"""
