@@ -100,6 +100,7 @@ t.metrics_result()
 |word2vec| 词向量 | 同义词检索 |
 |LAS| 潜在语义分析 | 适用主题文档 |
 |TextRank| PageRank | 将词语看出网络节点 |
+
 具体的比较和使用可以参考 [利用Python实现中文文本关键词抽取的三种方法](https://github.com/AimeeLee77/keyword_extraction)
 最终选择了tf-idf来作为构建文本分类模型输入的方法.
 
