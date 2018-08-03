@@ -281,9 +281,25 @@ if __name__ == '__main__':
     # 召回:0.96962
     # f1-score:0.96301
 
+    # after add user dict
+    # 使用alpha=0.001的多项式贝叶斯分类模型
+    # 训练所用时间 : 0.3670 sec
+    # 分类所用时间 : 0.0080 sec
+    # 精度:0.96878
+    # 召回:0.97030
+    # f1-score:0.96409
+
+    # 正负 1:5
+    # 使用alpha=0.001的多项式贝叶斯分类模型
+    # 训练所用时间 : 0.0920 sec
+    # 分类所用时间 : 0.0020 sec
+    # 精度:0.90207
+    # 召回:0.90250
+    # f1-score:0.88676
+
     # ==========================生成测试数据==========================
     # malicious_data_url = './data/minitrill/malicious_text.txt'
-    # normal_data_url = './data/minitrill/normal_text.txt'
+    # normal_data_url = './data/minitrill/normal_text_s.txt'
     #
     # p = 0
     # id_count = 0
@@ -326,13 +342,17 @@ if __name__ == '__main__':
     # train_data.save_tf_idf_data("./data/train.dat")
     # test_data.save_tf_idf_data("./data/test.dat")
 
-    # ==========================构造测试文本=====================
+    # ==========================构造测试文本 5 -> 1=====================
     # malicious_data_url = './data/minitrill/malicious.txt'
     # normal_data_url = './data/minitrill/normal.txt'
     #
-    # fr = open('./data/minitrill/malicious_text.txt', 'wb')
-    # with open(malicious_data_url, 'rb') as f:
+    # count = 0
+    # fr = open('./data/minitrill/normal_text_s.txt', 'wb')
+    # with open(normal_data_url, 'rb') as f:
     #     for line in f:
     #         line = line.decode('utf8').strip()
     #         t = line.split('\t')
-    #         fr.write(str(t[0]) + '-' + str(t[-1]) + '\n')
+    #         count += 1
+    #         if count >= 4:
+    #             fr.write(str(t[0]) + '-' + str(t[-1]) + '\n')
+    #             count = 0
